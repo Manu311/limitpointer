@@ -2,9 +2,19 @@
 #include <X11/extensions/XTest.h>
 #include <iostream>
 #include <stdlib.h>
+#include <signal.h>
+
+bool active = true;
+
+void playpause ( int sig )
+{
+	active = active ? false : true;
+}
 
 int main(int argc, char* argv[])
 {
+	signal(28, playpause); //killall -s 28 limitpointer will execute this function
+
 	Display *dsp = XOpenDisplay( NULL );
 	if( !dsp ){ return 1; }
 
@@ -20,11 +30,15 @@ int main(int argc, char* argv[])
 
 	while (true)
 	{
-		XQueryPointer(dsp, focusWin, &event.xbutton.root, &event.xbutton.window, &event.xbutton.x_root, &event.xbutton.y_root, &event.xbutton.x, &event.xbutton.y, &event.xbutton.state);
-		if (event.xbutton.x >= screen_width)
-			XTestFakeMotionEvent(dsp, DefaultScreen(dsp), screen_width - 1, event.xbutton.y, 0);
+		while (active)
+		{
+			XQueryPointer(dsp, focusWin, &event.xbutton.root, &event.xbutton.window, &event.xbutton.x_root, &event.xbutton.y_root, &event.xbutton.x, &event.xbutton.y, &event.xbutton.state);
+			if (event.xbutton.x >= screen_width)
+				XTestFakeMotionEvent(dsp, DefaultScreen(dsp), screen_width - 1, event.xbutton.y, 0);
 
-		usleep(500); //0.5 ms
+			usleep(500); //0.5 ms
+		}
+		sleep (1); // 1 s
 	}
 
 	XCloseDisplay( dsp );
