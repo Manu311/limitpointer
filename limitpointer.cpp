@@ -10,8 +10,6 @@ int main ()
 	
 	Window focusWin = RootWindow(dsp, DefaultScreen(dsp));
 
-	int screenNumber = DefaultScreen(dsp);
-
 	XEvent event;
 
 	XSelectInput(dsp, focusWin, PointerMotionMask);
