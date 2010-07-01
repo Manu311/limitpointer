@@ -1,20 +1,20 @@
 #include <X11/Xlib.h>                            
 #include <X11/extensions/XTest.h>
-#include <iostream>
-
-#define screen_width 800
 
 int main ()
 {
 	Display *dsp = XOpenDisplay( NULL );
 	if( !dsp ){ return 1; }
-	Window focusWin = RootWindow(dsp, DefaultScreen(dsp));
-	XSelectInput(dsp, focusWin, PointerMotionMask);
 
+	int screen_width = DisplayWidth(dsp, DefaultScreen(dsp));
 	
+	Window focusWin = RootWindow(dsp, DefaultScreen(dsp));
+
 	int screenNumber = DefaultScreen(dsp);
 
 	XEvent event;
+
+	XSelectInput(dsp, focusWin, PointerMotionMask);
 
 	while (true)
 	{
